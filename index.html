@@ -100,12 +100,16 @@
                 min-width: 0;
             }
             .flex.items-center.space-x-4.space-x-reverse {
-                flex-direction: column;
-                gap: 0.5rem;
+                flex-direction: column !important;
+                gap: 0.7rem !important;
+                align-items: stretch !important;
+                width: 100%;
             }
             .flex.space-x-2.space-x-reverse {
-                flex-direction: column;
-                gap: 0.5rem;
+                flex-direction: column !important;
+                gap: 0.7rem !important;
+                align-items: stretch !important;
+                width: 100%;
             }
             .max-w-2xl {
                 max-width: 100vw;
@@ -164,8 +168,10 @@
             </div>
         </div>
         <div class="flex items-center space-x-4 space-x-reverse">
-            <button class="btn">تسجيل الدخول</button>
-            <button class="btn">تسجيل جديد</button>
+            <div style="width:100%;display:flex;flex-direction:column;gap:0.7rem;">
+                <button class="btn" style="width:100%">تسجيل الدخول</button>
+                <button class="btn" style="width:100%">تسجيل جديد</button>
+            </div>
         </div>
     </nav>
 
@@ -180,8 +186,10 @@
             <span class="text-yellow-700 text-base font-bold">يرجى تفعيل الموقع لرؤية أقرب العروض</span>
         </div>
         <div class="flex space-x-2 space-x-reverse">
-            <button onclick="allowLocation()" class="btn">السماح</button>
-            <button onclick="dismissBanner()" class="btn bg-gray-200">تجاهل</button>
+            <div style="width:100%;display:flex;flex-direction:column;gap:0.7rem;">
+                <button onclick="allowLocation()" class="btn" style="width:100%">السماح</button>
+                <button onclick="dismissBanner()" class="btn bg-gray-200" style="width:100%">تجاهل</button>
+            </div>
         </div>
     </div>
     </div>
@@ -192,18 +200,20 @@
         <div class="flex justify-between items-center mb-8">
             <h2 class="text-3xl font-extrabold text-yellow-700 drop-shadow">العروض القريبة منك</h2>
             <div class="flex space-x-2 space-x-reverse">
-                <button class="btn flex items-center"> 
-                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
-                    </svg>
-                    فلترة
-                </button>
-                <button class="btn flex items-center"> 
-                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
-                    </svg>
-                    ترتيب
-                </button>
+                <div style="width:100%;display:flex;flex-direction:column;gap:0.7rem;">
+                    <button class="btn flex items-center" style="width:100%"> 
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+                        </svg>
+                        فلترة
+                    </button>
+                    <button class="btn flex items-center" style="width:100%"> 
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
+                        </svg>
+                        ترتيب
+                    </button>
+                </div>
             </div>
         </div>
 
