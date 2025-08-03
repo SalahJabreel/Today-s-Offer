@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عرض اليوم - Today's Offer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'arabic': ['Tajawal', 'Arial', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Tajawal', Arial, sans-serif;
+            background: linear-gradient(120deg, #f8fafc 0%, #f3e8ff 100%);
+            min-height: 100vh;
+        }
+        .navbar {
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border-bottom: 1px solid #f3f4f6;
+        }
+        .logo {
+            background: linear-gradient(90deg, #fbbf24 0%, #f59e42 100%);
+            box-shadow: 0 2px 8px rgba(251, 191, 36, 0.12);
+        }
+        .card {
+            background: #fff;
+            border-radius: 1.25rem;
+            box-shadow: 0 4px 24px 0 rgba(251, 191, 36, 0.10);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card:hover {
+            transform: scale(1.03) translateY(-2px);
+            box-shadow: 0 8px 32px 0 rgba(251, 191, 36, 0.18);
+        }
+        .nav-bottom {
+            background: #fff;
+            border-top: 1px solid #f3f4f6;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 95vw;
+            max-width: 500px;
+            border-radius: 1.25rem 1.25rem 0 0;
+            box-shadow: 0 -2px 16px rgba(251, 191, 36, 0.10);
+        }
+        .active-nav {
+            color: #f59e42 !important;
+        }
+        .btn {
+            background: linear-gradient(90deg, #fbbf24 0%, #f59e42 100%);
+            color: #fff;
+            border: none;
+            border-radius: 1rem;
+            padding: 0.5rem 1.5rem;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(251, 191, 36, 0.10);
+            transition: background 0.2s;
+        }
+        .btn:hover {
+            background: linear-gradient(90deg, #f59e42 0%, #fbbf24 100%);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-arabic">
+    <!-- Top Navbar -->
+    <nav class="navbar sticky top-0 z-50 py-3 px-6 flex justify-between items-center">
+        <div class="flex items-center">
+            <div class="logo p-2 rounded-lg ml-3">
+                <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M18.5 3H6c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h12.5c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM18 19H6V5h12v14z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                </svg>
+            </div>
+            <div>
+                <h1 class="text-2xl font-bold text-gray-800">عرض اليوم</h1>
+                <p class="text-xs text-gray-500">Today's Offer</p>
+            </div>
+        </div>
+        <div class="flex items-center space-x-4 space-x-reverse">
+            <button class="p-2 rounded-lg btn">تسجيل الدخول</button>
+            <button class="p-2 rounded-lg btn">تسجيل جديد</button>
+        </div>
+    </nav>
+
+    <!-- Geolocation Notice -->
+    <div id="locationBanner" class="bg-blue-50 border-b border-blue-200 px-4 py-3">
+    <div class="max-w-2xl mx-auto flex items-center justify-between">
+        <div class="flex items-center">
+            <svg class="w-6 h-6 text-yellow-400 ml-2 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            </svg>
+            <span class="text-yellow-700 text-base font-bold">يرجى تفعيل الموقع لرؤية أقرب العروض</span>
+        </div>
+        <div class="flex space-x-2 space-x-reverse">
+            <button onclick="allowLocation()" class="btn">السماح</button>
+            <button onclick="dismissBanner()" class="btn bg-gray-200 text-gray-700">تجاهل</button>
+        </div>
+    </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-20 md:pb-6">
+        <!-- Filter/Sort Section -->
+        <div class="flex justify-between items-center mb-8">
+            <h2 class="text-3xl font-extrabold text-yellow-700 drop-shadow">العروض القريبة منك</h2>
+            <div class="flex space-x-2 space-x-reverse">
+                <button class="btn flex items-center">
+                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+                    </svg>
+                    فلترة
+                </button>
+                <button class="btn flex items-center">
+                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
+                    </svg>
+                    ترتيب
+                </button>
+            </div>
+        </div>
+
+        <!-- Coffee Offers Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Offer Card 1 -->
+            <div class="card overflow-hidden">
+                <div class="relative">
+                    <div class="w-full h-48 bg-gradient-to-br from-amber-100 to-orange-200 flex items-center justify-center">
+                        <svg class="w-20 h-20 text-amber-600" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M18.5 3H6c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h12.5c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM18 19H6V5h12v14z"/>
+                            <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                    </div>
+                    <div class="absolute top-3 right-3 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-medium">
+                        خصم 30%
+                    </div>
+                </div>
+                <div class="p-4">
+                    <h3 class="font-bold text-gray-800 mb-1">كافيه الأصالة</h3>
+                    <p class="text-lg font-semibold text-amber-600 mb-2">لاتيه بـ 15 جنيه</p>
+                    <div class="flex items-center text-gray-500 text-sm mb-4">
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                        </svg>
+                        200 متر
+                    </div>
+                    <button class="w-full bg-amber-500 text-white py-2 rounded-lg hover:bg-amber-600 transition-colors font-medium">
+                        عرض التفاصيل
+                    </button>
+                </div>
+            </div>
+
+            <!-- Offer Card 2 -->
+            <div class="card overflow-hidden">
+                <div class="relative">
+                    <div class="w-full h-48 bg-gradient-to-br from-green-100 to-emerald-200 flex items-center justify-center">
+                        <svg class="w-20 h-20 text-green-600" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M18.5 3H6c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h12.5c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM18 19H6V5h12v14z"/>
+                            <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                    </div>
+                    <div class="absolute top-3 right-3 bg-green-500 text-white px-2 py-1 rounded-full text-xs font-medium">
+                        عرض خاص
+                    </div>
+                </div>
+                <div class="p-4">
+                    <h3 class="font-bold text-gray-800 mb-1">مقهى النخبة</h3>
+                    <p class="text-lg font-semibold text-green-600 mb-2">كابتشينو + كرواسون بـ 25 جنيه</p>
+                    <div class="flex items-center text-gray-500 text-sm mb-4">
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                        </svg>
+                        350 متر
+                    </div>
+                    <button class="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition-colors font-medium">
+                        عرض التفاصيل
+                    </button>
+                </div>
+            </div>
+
+            <!-- Offer Card 3 -->
+            <div class="card overflow-hidden">
+                <div class="relative">
+                    <div class="w-full h-48 bg-gradient-to-br from-purple-100 to-indigo-200 flex items-center justify-center">
+                        <svg class="w-20 h-20 text-purple-600" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M18.5 3H6c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h12.5c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM18 19H6V5h12v14z"/>
+                            <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                    </div>
+                    <div class="absolute top-3 right-3 bg-purple-500 text-white px-2 py-1 rounded-full text-xs font-medium">
+                        جديد
+                    </div>
+                </div>
+                <div class="p-4">
+                    <h3 class="font-bold text-gray-800 mb-1">كوفي شوب المدينة</h3>
+                    <p class="text-lg font-semibold text-purple-600 mb-2">أمريكانو مجاني مع أي حلوى</p>
+                    <div class="flex items-center text-gray-500 text-sm mb-4">
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                        </svg>
+                        500 متر
+                    </div>
+                    <button class="w-full bg-purple-500 text-white py-2 rounded-lg hover:bg-purple-600 transition-colors font-medium">
+                        عرض التفاصيل
+                    </button>
+                </div>
+            </div>
+
+            <!-- Offer Card 4 -->
+            <div class="card overflow-hidden">
+                <div class="relative">
+                    <div class="w-full h-48 bg-gradient-to-br from-rose-100 to-pink-200 flex items-center justify-center">
+                        <svg class="w-20 h-20 text-rose-600" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M18.5 3H6c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h12.5c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM18 19H6V5h12v14z"/>
+                            <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                    </div>
+                    <div class="absolute top-3 right-3 bg-rose-500 text-white px-2 py-1 rounded-full text-xs font-medium">
+                        محدود
+                    </div>
+                </div>
+                <div class="p-4">
+                    <h3 class="font-bold text-gray-800 mb-1">مقهى الروشة</h3>
+                    <p class="text-lg font-semibold text-rose-600 mb-2">موكا بالشوكولاتة بـ 18 جنيه</p>
+                    <div class="flex items-center text-gray-500 text-sm mb-4">
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                        </svg>
+                        750 متر
+                    </div>
+                    <button class="w-full bg-rose-500 text-white py-2 rounded-lg hover:bg-rose-600 transition-colors font-medium">
+                        عرض التفاصيل
+                    </button>
+                </div>
+            </div>
+
+            <!-- Offer Card 5 -->
+            <div class="card overflow-hidden">
+                <div class="relative">
+                    <div class="w-full h-48 bg-gradient-to-br from-blue-100 to-cyan-200 flex items-center justify-center">
+                        <svg class="w-20 h-20 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M18.5 3H6c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h12.5c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM18 19H6V5h12v14z"/>
+                            <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                    </div>
+                    <div class="absolute top-3 right-3 bg-blue-500 text-white px-2 py-1 rounded-full text-xs font-medium">
+                        الأكثر طلباً
+                    </div>
+                </div>
+                <div class="p-4">
+                    <h3 class="font-bold text-gray-800 mb-1">كافيه البستان</h3>
+                    <p class="text-lg font-semibold text-blue-600 mb-2">قهوة تركية + معمول بـ 20 جنيه</p>
+                    <div class="flex items-center text-gray-500 text-sm mb-4">
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                        </svg>
+                        1.2 كيلو
+                    </div>
+                    <button class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition-colors font-medium">
+                        عرض التفاصيل
+                    </button>
+                </div>
+            </div>
+
+            <!-- Offer Card 6 -->
+            <div class="card overflow-hidden">
+                <div class="relative">
+                    <div class="w-full h-48 bg-gradient-to-br from-yellow-100 to-amber-200 flex items-center justify-center">
+                        <svg class="w-20 h-20 text-yellow-600" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M18.5 3H6c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h12.5c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM18 19H6V5h12v14z"/>
+                            <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                    </div>
+                    <div class="absolute top-3 right-3 bg-yellow-500 text-white px-2 py-1 rounded-full text-xs font-medium">
+                        ساخن
+                    </div>
+                </div>
+                <div class="p-4">
+                    <h3 class="font-bold text-gray-800 mb-1">مقهى الشرق</h3>
+                    <p class="text-lg font-semibold text-yellow-600 mb-2">إسبريسو دبل + بسكويت بـ 12 جنيه</p>
+                    <div class="flex items-center text-gray-500 text-sm mb-4">
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                        </svg>
+                        900 متر
+                    </div>
+                    <button class="w-full bg-yellow-500 text-white py-2 rounded-lg hover:bg-yellow-600 transition-colors font-medium">
+                        عرض التفاصيل
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bottom Navigation (Mobile Only) -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 md:hidden">
+        <div class="flex justify-around items-center py-3">
+            <button class="flex flex-col items-center py-2 px-3 active-nav">
+                <svg class="w-7 h-7 mb-1" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                </svg>
+                <span class="text-sm font-bold">الرئيسية</span>
+            </button>
+            <button class="flex flex-col items-center py-2 px-3 text-gray-400 hover:text-yellow-500 transition-colors">
+                <svg class="w-7 h-7 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                </svg>
+                <span class="text-sm font-bold">المفضلة</span>
+            </button>
+            <button class="flex flex-col items-center py-2 px-3 text-gray-400 hover:text-yellow-500 transition-colors relative">
+                <svg class="w-7 h-7 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5-5-5h5v-5a7.5 7.5 0 0 0-15 0v5h5l-5 5-5-5h5V7a9.5 9.5 0 0 1 19 0v10z"></path>
+                </svg>
+                <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">3</span>
+                <span class="text-sm font-bold">الإشعارات</span>
+            </button>
+            <button class="flex flex-col items-center py-2 px-3 text-gray-400 hover:text-yellow-500 transition-colors">
+                <svg class="w-7 h-7 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                </svg>
+                <span class="text-sm font-bold">الملف الشخصي</span>
+            </button>
+        </div>
+    </nav>
+
+    <script>
+        function allowLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        document.getElementById('locationBanner').style.display = 'none';
+                        // Here you would typically update the offers based on location
+                        console.log('Location allowed:', position.coords.latitude, position.coords.longitude);
+                    },
+                    function(error) {
+                        console.log('Location denied:', error);
+                    }
+                );
+            }
+        }
+
+        function dismissBanner() {
+            document.getElementById('locationBanner').style.display = 'none';
+        }
+
+        // Add click handlers for offer cards
+        document.querySelectorAll('button').forEach(button => {
+            if (button.textContent.includes('عرض التفاصيل')) {
+                button.addEventListener('click', function() {
+                    const cafeName = this.closest('.bg-white').querySelector('h3').textContent;
+                    alert(`عرض تفاصيل ${cafeName}`);
+                });
+            }
+        });
+
+        // Add click handlers for filter and sort buttons
+        document.querySelectorAll('button').forEach(button => {
+            if (button.textContent.includes('فلترة')) {
+                button.addEventListener('click', function() {
+                    alert('فتح خيارات الفلترة');
+                });
+            }
+            if (button.textContent.includes('ترتيب')) {
+                button.addEventListener('click', function() {
+                    alert('فتح خيارات الترتيب');
+                });
+            }
+        });
+
+        // تحسين تفعيل زر التنقل السفلي
+        document.querySelectorAll('nav button').forEach(button => {
+            button.addEventListener('click', function() {
+                document.querySelectorAll('nav button').forEach(btn => {
+                    btn.classList.remove('active-nav');
+                });
+                this.classList.add('active-nav');
+            });
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9693c98c615312ae',t:'MTc1NDIwMjg0Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
